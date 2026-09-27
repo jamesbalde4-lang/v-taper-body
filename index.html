@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#111111">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="V-Taper">
+<title>V-Taper Specialization</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-180.png">
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f4f4f4;color:#111;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}
+.app{max-width:600px;margin:auto;min-height:100vh;background:#f4f4f4;padding-bottom:92px}
+header{background:#111;color:#fff;padding:calc(18px + env(safe-area-inset-top)) 20px 20px;position:sticky;top:0;z-index:10}
+h1{font-size:28px;margin:0 0 5px;font-weight:800}.sub{opacity:.7;font-size:13px}
+.tabs{display:flex;gap:8px;overflow:auto;padding:14px 14px 4px;scrollbar-width:none}.tabs::-webkit-scrollbar{display:none}
+.tab{border:0;background:#ddd;border-radius:18px;padding:9px 14px;font-weight:700;white-space:nowrap}.tab.active{background:#111;color:#fff}
+main{padding:10px 14px}.daytitle{font-size:24px;font-weight:800;margin:10px 4px 3px}.focus{color:#666;font-size:13px;margin:0 4px 15px}
+.card{background:#fff;border-radius:18px;margin:10px 0;padding:15px;box-shadow:0 2px 12px #0000000d}
+.row{display:flex;gap:12px;align-items:center}.num{width:32px;height:32px;border-radius:10px;background:#111;color:#fff;display:grid;place-items:center;font-weight:800;flex:none}
+.ex{font-weight:800;font-size:16px}.meta{font-size:12px;color:#777;margin-top:3px}
+.btn{border:0;border-radius:12px;padding:10px 12px;font-weight:700;background:#eee}.primary{background:#111;color:#fff}
+.actions{display:flex;gap:8px;margin-top:12px}.actions .btn{flex:1}
+.check{width:22px;height:22px;accent-color:#111}
+.demo{height:190px;border-radius:15px;background:linear-gradient(160deg,#ededed,#fff);position:relative;overflow:hidden;margin:12px 0}
+.demo svg{width:100%;height:100%}.figure{fill:none;stroke:#111;stroke-width:7;stroke-linecap:round;stroke-linejoin:round}
+.weight{fill:#111}.guide{stroke:#999;stroke-width:3;stroke-dasharray:7 8;fill:none}
+@keyframes squat{0%,100%{transform:translateY(0)}50%{transform:translateY(22px)}}@keyframes press{0%,100%{transform:rotate(-12deg)}50%{transform:rotate(-32deg)}}
+@keyframes row{0%,100%{transform:translateX(0)}50%{transform:translateX(24px)}}@keyframes fly{0%,100%{transform:rotate(0)}50%{transform:rotate(-30deg)}}
+@keyframes raise{0%,100%{transform:rotate(0)}50%{transform:rotate(-42deg)}}@keyframes pull{0%,100%{transform:translateY(-4px)}50%{transform:translateY(26px)}}
+@keyframes hinge{0%,100%{transform:rotate(0)}50%{transform:rotate(25deg)}}@keyframes curl{0%,100%{transform:rotate(0)}50%{transform:rotate(-40deg)}}
+.anim-squat{animation:squat 2s ease-in-out infinite}.anim-press{animation:press 2s ease-in-out infinite}.anim-row{animation:row 2s ease-in-out infinite}.anim-fly{animation:fly 2s ease-in-out infinite}.anim-raise{animation:raise 2s ease-in-out infinite}.anim-pull{animation:pull 2s ease-in-out infinite}.anim-hinge{animation:hinge 2s ease-in-out infinite}.anim-curl{animation:curl 2s ease-in-out infinite}
+.detail h2{margin:0 0 4px}.detail p{color:#666;font-size:13px}.tip{background:#f0f0f0;border-radius:12px;padding:10px;font-size:12px;margin-top:10px}
+.bottom{position:fixed;bottom:0;left:0;right:0;max-width:600px;margin:auto;background:#fff;border-top:1px solid #ddd;padding:10px 14px calc(10px + env(safe-area-inset-bottom));display:flex;gap:8px;z-index:20}
+.bottom button{flex:1;border:0;border-radius:14px;padding:12px;font-weight:800;background:#eee}.bottom .active{background:#111;color:#fff}
+.timer{font-size:38px;font-weight:900;text-align:center;margin:10px}.timer button{margin:4px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}.stat{background:#111;color:#fff;border-radius:16px;padding:16px}.stat b{font-size:24px;display:block}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+<div class="app">
+<header><h1>V-Taper</h1><div class="sub">4-Day Specialization Program • Offline</div></header>
+<div class="tabs" id="tabs"></div>
+<main id="main"></main>
+<div class="bottom">
+<button onclick="showSchedule()" id="bs">Schedule</button>
+<button onclick="showStats()" id="bt">Progress</button>
+</div>
+</div>
+<script>
+const plan={
+Monday:{focus:"Chest & Lat Width Focus",items:[
+["Incline Dumbbell Press (30°)","4 × 6–8","2–3 min","press","Upper chest"],
+["Weighted Pull-Ups","4 × 6–8","2–3 min","pull","Upper lats","Alternative: Wide-Grip Lat Pulldown"],
+["Incline Cable Flyes","3 × 10–12","60–90 sec","fly","Upper chest"],
+["Standing Cable Lateral Raises (Behind-the-Back)","4 × 12–15","60–90 sec","raise","Side delts"],
+["Chest-Supported Pronated Row","3 × 10–12","90 sec","row","Back thickness"],
+["High-to-Low Cable Flyes","3 × 12–15","60–90 sec","fly","Chest"],
+["Neutral-Grip Lat Pulldown","3 × 10–12","90 sec","pull","Lat width"]
+]},
+Tuesday:{focus:"Lower Body & Core Hypertrophy",items:[
+["Barbell Back Squat","4 × 6–8","2–3 min","squat","Quads & glutes"],
+["Leg Press (Low & Narrow Foot Placement)","3 × 10–12","2 min","press","Quad sweep"],
+["Seated Leg Extension","3 × 15 • Last set double drop","60–90 sec","curl","Quads"],
+["Romanian Bulgarian Split Squat","3 × 10 / leg","90 sec","squat","Quads & glutes"],
+["Hanging Knee Raises","4 × 12–15","60 sec","raise","Core"],
+["Plank-to-Vacuum Holds","3 × 45 sec","60 sec","plank","Waist control"],
+["Standing Calf Raises","4 × 12–15","60 sec","raise","Calves"]
+]},
+Thursday:{focus:"Deltoid Capping & Back Thickness",items:[
+["Seated Dumbbell Shoulder Press","4 × 8–10","2 min","press","Shoulders"],
+["Meadows Rows","3 × 8–10","90 sec","row","Back thickness"],
+["Lean-Away Dumbbell Lateral Raises","4 × 12–15","60–90 sec","raise","Side delts"],
+["Straight-Arm Rope Pulldowns","4 × 12–15","60–90 sec","pull","Lower lats"],
+["Incline Rear Delt Flyes","4 × 15","60 sec","fly","Rear delts"],
+["Single-Arm Cable Lat Pulldown","3 × 10–12","90 sec","pull","Lower lats"],
+["Face Pulls","3 × 15","60 sec","pull","Rear delts"]
+]},
+Friday:{focus:"Posterior Chain & Vacuum Core",items:[
+["Romanian Deadlifts","4 × 8","2–3 min","hinge","Hamstrings & glutes"],
+["Walking Lunges","3 × 12 steps / leg","90 sec","squat","Glutes & legs"],
+["Lying Leg Curls","4 × 10–12 • 3-sec eccentric","90 sec","curl","Hamstrings"],
+["Seated Calf Raises","4 × 15","60 sec","raise","Calves"],
+["Supine Stomach Vacuums","4 × 25–30 sec","45 sec","plank","Waist compression"],
+["Dead Bugs","3 × 15","60 sec","core","Core stability"],
+["Hollow Body Holds","3 × 30 sec","60 sec","core","Core"]
+]}};
+const days=Object.keys(plan), today=new Date().getDay();
+let selected= today===1?"Monday":today===2?"Tuesday":today===4?"Thursday":today===5?"Friday":"Monday";
+let completed=JSON.parse(localStorage.getItem("vtaperCompleted")||"{}");
+let weights=JSON.parse(localStorage.getItem("vtaperWeights")||"{}");
+
+function tabs(){document.getElementById("tabs").innerHTML=days.map(d=>`<button class="tab ${d===selected?'active':''}" onclick="selectDay('${d}')">${d.slice(0,3)}</button>`).join("")}
+function selectDay(d){selected=d;showSchedule()}
+function save(){localStorage.setItem("vtaperCompleted",JSON.stringify(completed));localStorage.setItem("vtaperWeights",JSON.stringify(weights))}
+function key(d,i){return d+"-"+i}
+function svg(type){
+let cls=type==="press"?"anim-press":type==="row"?"anim-row":type==="fly"?"anim-fly":type==="raise"?"anim-raise":type==="pull"?"anim-pull":type==="hinge"?"anim-hinge":type==="squat"?"anim-squat":"anim-raise";
+return `<div class="demo"><svg viewBox="0 0 400 190">
+<path class="guide" d="M35 160 H365"/><g class="${cls}">
+<circle class="figure" cx="200" cy="45" r="18"/><path class="figure" d="M200 64 L200 118 M200 78 L145 95 M200 78 L255 95 M200 118 L170 160 M200 118 L230 160"/>
+${type==="press"?'<path class="figure" d="M135 90 L115 55 M265 90 L285 55"/><rect class="weight" x="106" y="49" width="18" height="7" rx="3"/><rect class="weight" x="276" y="49" width="18" height="7" rx="3"/>':
+type==="row"?'<path class="figure" d="M200 80 L155 105 L130 120 M200 80 L245 105 L270 120"/>':
+type==="fly"?'<path class="figure" d="M200 80 L125 70 M200 80 L275 70"/>':
+type==="raise"?'<path class="figure" d="M200 80 L135 55 M200 80 L265 55"/>':
+type==="pull"?'<path class="figure" d="M200 78 L160 105 M200 78 L240 105"/><path class="guide" d="M120 20 H280"/>':
+type==="hinge"?'<path class="figure" d="M200 80 L155 120 M200 80 L245 120"/>':
+type==="squat"?'<path class="figure" d="M200 78 L160 100 M200 78 L240 100"/>':
+'<path class="figure" d="M130 135 L180 135 M220 135 L270 135"/>'
+}</g></svg></div>`}
+function card(d,i,x){
+let k=key(d,i), done=!!completed[k];
+return `<div class="card"><div class="row"><div class="num">${i+1}</div><div style="flex:1"><div class="ex">${x[0]}</div><div class="meta">${x[1]} • Rest ${x[2]} • ${x[4]}</div></div><input class="check" type="checkbox" ${done?"checked":""} onchange="toggleDone('${k}',this.checked)"></div>
+<div class="actions"><button class="btn" onclick="openExercise('${d}',${i})">▶ Animated Demo</button><button class="btn" onclick="startTimer('${x[2]}')">⏱ Rest</button></div></div>`}
+function showSchedule(){tabs();let p=plan[selected];document.getElementById("main").innerHTML=`<div class="daytitle">${selected}</div><p class="focus">${p.focus}</p>${p.items.map((x,i)=>card(selected,i,x)).join("")}<div class="card"><b>Progression</b><p class="meta">Compounds: when every set reaches the top of the rep range, increase weight by the smallest increment. Isolations: reach 15 reps on all sets, then increase slightly.</p></div><div class="card"><b>Optional Cardio</b><p class="meta">2–3× weekly • Incline treadmill walk • 20–30 min • Moderate pace</p></div>`}
+function toggleDone(k,v){completed[k]=v;save()}
+function openExercise(d,i){let x=plan[d].items[i];document.getElementById("main").innerHTML=`<div class="card detail"><button class="btn" onclick="showSchedule()">← Back</button><h2 style="margin-top:15px">${x[0]}</h2><p>${d} • ${x[1]} • Rest ${x[2]}</p>${svg(x[3])}<div class="tip"><b>Animation:</b> Use the movement as a visual cue. Keep the motion controlled and use a weight you can perform safely with good form.</div>${x[5]?`<div class="tip"><b>Alternative:</b> ${x[5]}</div>`:""}<button class="btn primary" style="width:100%;margin-top:12px" onclick="startTimer('${x[2]}')">Start Rest Timer</button></div>`}
+let timer=null,secs=90;
+function parseSec(s){let m=s.match(/(\d+)\s*min/);if(m)return +m[1]*60;return 60}
+function startTimer(s){secs=parseSec(s);clearInterval(timer);renderTimer();timer=setInterval(()=>{secs--;renderTimer();if(secs<=0){clearInterval(timer);navigator.vibrate?.([200,100,200])}},1000)}
+function renderTimer(){let el=document.getElementById("main");el.innerHTML=`<div class="card" style="text-align:center"><h2>Rest Timer</h2><div class="timer">${Math.floor(secs/60)}:${String(secs%60).padStart(2,"0")}</div><button class="btn" onclick="secs+=30;renderTimer()">+30 sec</button><button class="btn" onclick="secs=Math.max(0,secs-30);renderTimer()">-30 sec</button><button class="btn primary" onclick="showSchedule()">Done</button></div>`}
+function showStats(){tabs();let total=0,done=0;days.forEach(d=>plan[d].items.forEach((_,i)=>{total++;if(completed[key(d,i)])done++}));document.getElementById("main").innerHTML=`<div class="daytitle">Progress</div><div class="stats"><div class="stat"><b>${done}/${total}</b>Exercises completed</div><div class="stat"><b>${Math.round(done/total*100)}%</b>Program progress</div></div><div class="card"><b>Weekly priorities</b><p class="meta">Grow: side delts, upper lats, upper chest, rear delts.</p><p class="meta">Maintain: arms and legs.</p><p class="meta">Keep small: waist and obliques.</p></div><div class="card"><b>Training note</b><p class="meta">Progress gradually. Stop an exercise if you feel sharp pain, dizziness, or anything unusual.</p></div>`}
+showSchedule();
+</script>
+</body></html>
